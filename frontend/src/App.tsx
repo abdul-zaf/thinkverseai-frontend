@@ -7,9 +7,8 @@ import React from 'react';
 import { motion } from 'motion/react';
 import { HorizontalScroll } from './components/HorizontalScroll';
 import { Testimonials } from './components/Testimonials';
-import { ChatWidget } from './components/ChatWidget';
 import { StickyCTA } from './components/StickyCTA';
-import { VoiceWidget } from './components/VoiceWidget';
+import { CombinedWidget } from './components/Combinedwidget';
 import { ArrowDown, Zap, Globe, Cpu, Sparkles } from 'lucide-react';
 
 const WEBHOOK_URL = 'https://n8n.thinkverseai.ca/webhook/thinkverse-contact';
@@ -251,8 +250,7 @@ export default function App() {
       </footer>
 
       {/* Widgets — ChatWidget bottom-right, VoiceWidget bottom-left */}
-      <ChatWidget />
-      <VoiceWidget />
+      <CombinedWidget />
       <StickyCTA />
 
       <style>{`
