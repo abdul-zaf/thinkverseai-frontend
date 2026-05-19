@@ -527,3 +527,4 @@ export const CombinedWidget = () => {
       </motion.button>
     </div>
   );
+}
