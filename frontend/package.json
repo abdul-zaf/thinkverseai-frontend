@@ -5,6 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev:server": "npx tsx server/dev.ts",
+    "dev:agent": "python ../agent/agent.py start",
+    "dev:all": "concurrently -n \"vite,server,agent\" -c \"cyan,yellow,green\" \"npm run dev\" \"npm run dev:server\" \"npm run dev:agent\"",
     "build": "vite build",
     "preview": "vite preview",
     "start": "npm run build && node --loader tsx/esm server/index.ts",
@@ -12,6 +15,7 @@
     "lint": "tsc --noEmit"
   },
   "dependencies": {
+    "concurrently": "^9.0.0",
     "@google/genai": "^1.29.0",
     "@tailwindcss/vite": "^4.1.14",
     "@vitejs/plugin-react": "^5.0.4",

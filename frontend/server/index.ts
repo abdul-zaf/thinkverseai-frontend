@@ -23,7 +23,7 @@ app.get('/api/livekit-token', async (_req, res) => {
   }
 
   const identity = `visitor-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-  const room     = `pauls-pizza-${identity}`;
+  const room     = `thinkverse-${identity}`;
 
   const token = new AccessToken(apiKey, apiSecret, { identity, ttl: '1h' });
   token.addGrant({ roomJoin: true, room, canPublish: true, canSubscribe: true });

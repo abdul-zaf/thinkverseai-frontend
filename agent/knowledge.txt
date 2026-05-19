@@ -1,0 +1,72 @@
+# ThinkVerse AI — Company & Services Knowledge Base
+
+## Company Overview
+- Name: ThinkVerse AI Agency
+- Website: thinkverseai.ca
+- Focus: Custom AI automation solutions for businesses
+- Languages supported: English and Arabic
+- Response time for consultations: within 24 hours of contact form submission
+
+## Services
+
+### 1. Voice Agents
+- Human-like conversational AI for customer support, sales, and lead qualification
+- Natural intonation, low latency, handles complex multi-turn conversations
+- Bilingual support: English and Arabic
+- Built on LiveKit real-time WebRTC infrastructure with D-ID avatar technology
+- Use cases: customer support hotlines, sales qualification, appointment booking, FAQ automation
+- Technologies: NLP, TTS (Text-to-Speech), STT (Speech-to-Text), WebRTC, AI Avatar
+- Live demo: https://pizzadelivery.thinkverseai.ca
+- Pricing: Custom — book a consultation
+
+### 2. RAG Agents (Retrieval-Augmented Generation)
+- Connects your private business data to large language models for accurate answers
+- Can index: PDFs, websites, databases, internal wikis, product manuals, knowledge bases
+- Responses are grounded in your actual documents — no hallucinations
+- Keeps answers current as your data updates
+- Technologies: Vector DB, LLM, Knowledge Base, Embeddings, Semantic Search
+- Live demo: https://windmason.thinkverseai.ca
+- Pricing: Custom — book a consultation
+
+### 3. Digital Marketing Automation
+- Automated Facebook and social media marketing workflows
+- AI-driven ad targeting and budget optimization to maximize ROI
+- Lead generation, nurturing, and follow-up automation
+- Multi-platform coverage: Facebook, Instagram, and other social channels
+- Measurable results: clients report 3x improvement in lead generation efficiency
+- Technologies: AI Automation, Ad Management APIs, CRM Integration
+- Live demo: https://adautomation.thinkverseai.ca
+- Pricing: Custom — book a consultation
+
+### 4. AI Schedulers
+- Intelligent booking and appointment management systems
+- Handles multi-timezone scheduling without conflicts or errors
+- Automated reminders, waitlist management, and calendar integrations
+- Can enforce complex booking rules, staff availability, and service durations
+- Technologies: Calendar APIs, AI Logic, Automation Workflows
+- Live demo: https://luxsaloon.thinkverseai.ca
+- Pricing: Custom — book a consultation
+
+### 5. Custom AI Solutions
+- Bespoke AI development tailored to unique business requirements
+- Capabilities: computer vision, predictive analytics, document processing, workflow automation
+- Enterprise-grade, scalable architectures from prototype to production
+- Full-stack delivery: strategy, development, deployment, and ongoing support
+- Pricing: Custom — book a consultation
+
+## Pricing Policy
+All services are priced on a custom basis depending on project scope, complexity, and business requirements.
+There are no fixed pricing tiers — every solution is built specifically for the client.
+To get a quote: fill out the contact form at thinkverseai.ca. The team will reach out within 24 hours.
+
+## Why ThinkVerse AI?
+- Rapid deployment — from concept to live in days, not months
+- Bilingual capabilities — English and Arabic support out of the box
+- Proven results: 70% reduction in customer support response times, 3x lead generation improvement
+- Nothing off-the-shelf — every solution is custom-built for your business
+- End-to-end ownership: strategy, development, deployment, and support
+
+## Booking a Consultation
+To get started, fill out the contact form on the ThinkVerse AI website (thinkverseai.ca).
+The team will respond within 24 hours to schedule a discovery call.
+There is no commitment required for the initial consultation.
