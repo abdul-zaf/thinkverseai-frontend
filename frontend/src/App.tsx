@@ -249,7 +249,6 @@ export default function App() {
         </div>
       </footer>
 
-      {/* Widgets — ChatWidget bottom-right, VoiceWidget bottom-left */}
       <CombinedWidget />
       <StickyCTA />
 

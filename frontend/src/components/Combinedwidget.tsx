@@ -2,7 +2,7 @@
  * CombinedWidget.tsx
  * Unified chat + voice widget for ThinkVerse AI.
  * Single FAB bottom-right; opens a panel where the user picks Text or Voice mode.
- * Drop-in replacement for both <ChatWidget /> and <VoiceWidget /> in App.tsx.
+ * Drop-in replacement for both <ChatWidget /> and <VoiceWidget /> in App.tsx — use <CombinedWidget /> instead.
  */
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
