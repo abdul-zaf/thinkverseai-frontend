@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port=3000 --host=0.0.0.0",
+    "dev": "vite --port=3001 --host=0.0.0.0",
     "dev:server": "npx tsx server/dev.ts",
     "dev:agent": "python ../agent/agent.py start",
-    "dev:all": "concurrently -n \"vite,server,agent\" -c \"cyan,yellow,green\" \"npm run dev\" \"npm run dev:server\" \"npm run dev:agent\"",
+    "dev:all": "concurrently -n \"vite,server,agent\" -c \"cyan,yellow,green\" --kill-others-on-fail \"npm run dev:server\" \"npm run dev:agent\" \"npm run dev\"",
     "build": "vite build",
     "preview": "vite preview",
     "start": "npm run build && node --loader tsx/esm server/index.ts",
