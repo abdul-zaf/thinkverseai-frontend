@@ -103,7 +103,7 @@ function ModeSelector({ onSelect }: { onSelect: (m: 'chat' | 'voice') => void })
               Voice Agent
             </div>
             <div className="font-mono text-[10px] uppercase tracking-widest opacity-60 group-hover:opacity-80">
-              Live demo — speak with our AI
+              Speak with our AI Agent
             </div>
           </div>
           <div className="ml-auto font-mono text-xs opacity-30 group-hover:opacity-60">→</div>
