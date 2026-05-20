@@ -30,10 +30,7 @@ app.get('/api/livekit-token', async (_req, res) => {
   await roomService.createRoom({ name: room });
 
   const dispatchClient = new AgentDispatchClient(livekitUrl, apiKey, apiSecret);
-  const existing = await dispatchClient.listDispatches(room);
-  if (existing.length === 0) {
-    await dispatchClient.createDispatch(room, '');
-  }
+  await dispatchClient.createDispatch(room, '');
 
   const token = new AccessToken(apiKey, apiSecret, { identity, ttl: '1h' });
   token.addGrant({ roomJoin: true, room, canPublish: true, canSubscribe: true });
