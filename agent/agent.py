@@ -22,7 +22,6 @@ from livekit.agents import (
     function_tool,
     inference,
 )
-from livekit.plugins import openai as lk_openai
 from livekit.plugins import silero
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
@@ -118,13 +117,15 @@ server = AgentServer()
 
 
 async def on_session_end(ctx: JobContext) -> None:
-    userdata = ctx.primary_session.userdata
-    if userdata.email:
-        ctx.tagger.success()
-    else:
-        ctx.tagger.fail(reason="Visitor did not book a consultation")
-
-    logger.info("session tags: %s", ctx.tagger.tags)
+    try:
+        userdata = ctx.primary_session.userdata
+        if userdata.email:
+            ctx.tagger.success()
+        else:
+            ctx.tagger.fail(reason="Visitor did not book a consultation")
+        logger.info("session tags: %s", ctx.tagger.tags)
+    except RuntimeError:
+        pass
 
 
 @server.rtc_session(on_session_end=on_session_end)
@@ -134,7 +135,7 @@ async def thinkverse_agent(ctx: JobContext):
     session = AgentSession[Userdata](
         userdata=Userdata(),
         stt=inference.STT("deepgram/nova-3"),
-        llm=lk_openai.LLM.with_ollama(model="llama3.2"),
+        llm=inference.LLM("openai/gpt-4o-mini"),
         tts=inference.TTS("cartesia/sonic-3", voice="156fb8d2-335b-4950-9cb3-a2d33befec77"),
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),
