@@ -19,12 +19,15 @@ app.get('/api/livekit-token', async (_req, res) => {
   const identity = `visitor-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
   const room     = `thinkverse-${identity}`;
 
-  // Create the room first, then explicitly dispatch the agent to it
+  // Create the room then dispatch exactly one agent to it
   const roomService = new RoomServiceClient(livekitUrl, apiKey, apiSecret);
   await roomService.createRoom({ name: room });
 
   const dispatchClient = new AgentDispatchClient(livekitUrl, apiKey, apiSecret);
-  await dispatchClient.createDispatch(room, '');
+  const existing = await dispatchClient.listDispatches(room);
+  if (existing.length === 0) {
+    await dispatchClient.createDispatch(room, '');
+  }
 
   const token = new AccessToken(apiKey, apiSecret, { identity, ttl: '1h' });
   token.addGrant({ roomJoin: true, room, canPublish: true, canSubscribe: true });

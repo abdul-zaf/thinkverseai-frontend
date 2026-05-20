@@ -20,10 +20,9 @@ from livekit.agents import (
     RunContext,
     cli,
     function_tool,
-    inference,
 )
 from livekit.plugins import openai as lk_openai
-from livekit.plugins import silero
+from livekit.plugins import deepgram, cartesia, silero
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 logger = logging.getLogger("thinkverse-voice-agent")
@@ -133,9 +132,9 @@ async def thinkverse_agent(ctx: JobContext):
 
     session = AgentSession[Userdata](
         userdata=Userdata(),
-        stt=inference.STT("deepgram/nova-3"),
+        stt=deepgram.STT(),
         llm=lk_openai.LLM.with_ollama(model="llama3.2"),
-        tts=inference.TTS("cartesia/sonic-3", voice="156fb8d2-335b-4950-9cb3-a2d33befec77"),
+        tts=cartesia.TTS(voice="156fb8d2-335b-4950-9cb3-a2d33befec77"),
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),
         max_tool_steps=1,
