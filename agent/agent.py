@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import datetime
 import logging
-import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -23,18 +22,9 @@ from livekit.agents import (
     function_tool,
     inference,
 )
-from livekit.agents.evals import (
-    JudgeGroup,
-    accuracy_judge,
-    coherence_judge,
-    conciseness_judge,
-    relevancy_judge,
-    safety_judge,
-    task_completion_judge,
-)
+from livekit.plugins import openai as lk_openai
 from livekit.plugins import silero
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
-from livekit.plugins.did import AvatarSession
 
 logger = logging.getLogger("thinkverse-voice-agent")
 
@@ -128,26 +118,6 @@ server = AgentServer()
 
 
 async def on_session_end(ctx: JobContext) -> None:
-    report = ctx.make_session_report()
-
-    chat = report.chat_history.copy(exclude_function_call=True, exclude_instructions=True)
-    if len(chat.items) < 3:
-        return
-
-    judges = JudgeGroup(
-        llm="openai/gpt-4o-mini",
-        judges=[
-            task_completion_judge(),
-            accuracy_judge(),
-            safety_judge(),
-            relevancy_judge(),
-            coherence_judge(),
-            conciseness_judge(),
-        ],
-    )
-
-    await judges.evaluate(report.chat_history)
-
     userdata = ctx.primary_session.userdata
     if userdata.email:
         ctx.tagger.success()
@@ -164,18 +134,12 @@ async def thinkverse_agent(ctx: JobContext):
     session = AgentSession[Userdata](
         userdata=Userdata(),
         stt=inference.STT("deepgram/nova-3"),
-        llm=inference.LLM("openai/gpt-4o-mini"),
+        llm=lk_openai.LLM.with_ollama(model="llama3.2"),
         tts=inference.TTS("cartesia/sonic-3", voice="156fb8d2-335b-4950-9cb3-a2d33befec77"),
         turn_detection=MultilingualModel(),
         vad=silero.VAD.load(),
         max_tool_steps=1,
     )
-
-    avatar = AvatarSession(
-        agent_id=os.environ["DID_PRESENTER_ID"],
-        api_key=os.environ["DID_API_KEY"],
-    )
-    await avatar.start(session, room=ctx.room)
 
     await session.start(agent=ThinkVerseAgent(timezone="utc"), room=ctx.room)
 

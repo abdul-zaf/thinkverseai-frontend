@@ -9,7 +9,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   MessageSquare, Mic, MicOff, PhoneOff, X,
-  Send, Loader2, MessagesSquare, Radio,
+  Send, Loader2, MessagesSquare, Radio, Volume2,
 } from 'lucide-react';
 
 //Types
@@ -224,17 +224,13 @@ function ChatPanel({ onBack }: { onBack: () => void }) {
 function VoicePanel({ onBack }: { onBack: () => void }) {
   const [state, setState] = useState<VoiceState>('idle');
   const [isMuted, setIsMuted] = useState(false);
-  const [avatarReady, setAvatarReady] = useState(false);
   const [agentSpeaking, setAgentSpeaking] = useState(false);
-  const [statusText, setStatusText] = useState('');
 
   const roomRef  = useRef<any>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   const connect = useCallback(async () => {
     setState('connecting');
-    setStatusText('Connecting to demo agent...');
     try {
       const res = await fetch('/api/livekit-token');
       if (!res.ok) throw new Error('Token fetch failed');
@@ -245,11 +241,6 @@ function VoicePanel({ onBack }: { onBack: () => void }) {
       roomRef.current = room;
 
       room.on(RoomEvent.TrackSubscribed, (track: any) => {
-        if (track.kind === Track.Kind.Video && videoRef.current) {
-          track.attach(videoRef.current);
-          setAvatarReady(true);
-          setStatusText('');
-        }
         if (track.kind === Track.Kind.Audio && audioRef.current) {
           track.attach(audioRef.current);
         }
@@ -258,26 +249,23 @@ function VoicePanel({ onBack }: { onBack: () => void }) {
       room.on(RoomEvent.ActiveSpeakersChanged, (speakers: any[]) => {
         setAgentSpeaking(speakers.some((s: any) => s.identity !== room.localParticipant.identity));
       });
-      room.on(RoomEvent.ParticipantConnected, () => setStatusText('Demo agent is joining...'));
       room.on(RoomEvent.Disconnected, () => {
-        setState('idle'); setAvatarReady(false); setAgentSpeaking(false); setStatusText('');
+        setState('idle'); setAgentSpeaking(false);
       });
 
       await room.connect(url, token);
       await room.localParticipant.setMicrophoneEnabled(true);
       setState('connected');
-      setStatusText('Loading avatar...');
     } catch (err) {
       console.error(err);
       setState('error');
-      setStatusText('Connection failed — please try again');
-      setTimeout(() => { setState('idle'); setStatusText(''); }, 3000);
+      setTimeout(() => setState('idle'), 3000);
     }
   }, []);
 
   const disconnect = useCallback(async () => {
     if (roomRef.current) { await roomRef.current.disconnect(); roomRef.current = null; }
-    setState('idle'); setAvatarReady(false); setAgentSpeaking(false); setIsMuted(false); setStatusText('');
+    setState('idle'); setAgentSpeaking(false); setIsMuted(false);
   }, []);
 
   const toggleMute = useCallback(async () => {
@@ -305,79 +293,65 @@ function VoicePanel({ onBack }: { onBack: () => void }) {
             state === 'connected' ? 'bg-green-400 animate-pulse' : 'bg-accent-gold'
           )} />
           <span className="font-mono text-[10px] uppercase tracking-widest">
-            {state === 'connected' ? 'Voice Agent — Live' : 'Voice Agent Demo'}
+            {state === 'connected' ? 'Voice Agent — Live' : 'Voice Agent'}
           </span>
         </div>
         <div className="w-12" />
       </div>
 
-      {/* Avatar video */}
-      <div className="relative bg-brutal-black aspect-video w-full overflow-hidden">
-        <video ref={videoRef} autoPlay playsInline
-          className={cn('w-full h-full object-cover transition-opacity duration-700', avatarReady ? 'opacity-100' : 'opacity-0')}
-        />
+      {/* Audio-only visualiser */}
+      <div className="flex-1 flex flex-col items-center justify-center gap-6 bg-brutal-black px-6 py-8">
         <audio ref={audioRef} autoPlay />
 
-        {agentSpeaking && avatarReady && (
-          <div className="absolute inset-0 border-4 border-accent-gold pointer-events-none animate-pulse" />
-        )}
+        {/* Animated orb */}
+        <div className={cn(
+          'w-24 h-24 rounded-full border-4 flex items-center justify-center transition-all duration-300',
+          state === 'connected' && agentSpeaking
+            ? 'border-accent-gold shadow-[0_0_32px_rgba(255,193,7,0.5)] scale-110'
+            : state === 'connected'
+            ? 'border-green-400 shadow-[0_0_16px_rgba(74,222,128,0.3)]'
+            : 'border-white/20'
+        )}>
+          {state === 'connecting' ? (
+            <Loader2 className="w-10 h-10 text-accent-gold animate-spin" />
+          ) : state === 'error' ? (
+            <Radio className="w-10 h-10 text-red-400" />
+          ) : (
+            <Volume2 className={cn(
+              'w-10 h-10 transition-colors',
+              agentSpeaking ? 'text-accent-gold' : 'text-white/60'
+            )} />
+          )}
+        </div>
 
-        {!avatarReady && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-4">
-            {state === 'idle' && (
-              <>
-                <div className="w-14 h-14 border-4 border-accent-gold flex items-center justify-center">
-                  <Radio className="w-7 h-7 text-accent-gold" />
-                </div>
-                <p className="text-white font-mono text-[10px] text-center uppercase tracking-wider">
-                  Try our AI voice agent demo
-                </p>
-              </>
-            )}
-            {(state === 'connecting' || state === 'connected') && (
-              <>
-                <div className="flex items-end gap-1 h-8">
-                  {[0.4, 0.7, 1, 0.7, 0.4].map((h, i) => (
-                    <motion.div key={i} className="w-1.5 bg-accent-gold"
-                      animate={{ scaleY: [h, 1, h] }}
-                      transition={{ duration: 0.8, repeat: Infinity, delay: i * 0.1 }}
-                      style={{ height: '100%', transformOrigin: 'bottom' }}
-                    />
-                  ))}
-                </div>
-                <p className="text-white font-mono text-[10px] uppercase tracking-wider">{statusText}</p>
-              </>
-            )}
-            {state === 'error' && (
-              <p className="text-red-400 font-mono text-[10px] text-center uppercase tracking-wider px-2">{statusText}</p>
-            )}
-          </div>
-        )}
+        {/* Sound bars — visible while agent is speaking */}
+        <div className="flex items-end gap-1 h-8">
+          {[0.3, 0.6, 1, 0.6, 0.3].map((h, i) => (
+            <motion.div
+              key={i}
+              className="w-1.5 bg-accent-gold rounded-full"
+              animate={agentSpeaking ? { scaleY: [h, 1, h] } : { scaleY: 0.15 }}
+              transition={{ duration: 0.7, repeat: Infinity, delay: i * 0.1 }}
+              style={{ height: '100%', transformOrigin: 'bottom' }}
+            />
+          ))}
+        </div>
 
-        {avatarReady && statusText && (
-          <div className="absolute bottom-2 left-0 right-0 flex justify-center">
-            <span className="bg-black/70 text-white font-mono text-[10px] px-2 py-0.5 uppercase tracking-wider">{statusText}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Status bar */}
-      <div className="bg-accent-gold px-4 py-1.5 border-y-2 border-brutal-black">
-        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-brutal-black font-bold">
-          {state === 'idle' && 'Demo — speak with our AI voice agent'}
-          {state === 'connecting' && 'Establishing connection...'}
-          {state === 'connected' && (agentSpeaking ? 'Agent is speaking...' : 'Listening...')}
-          {state === 'error' && 'Connection error'}
+        <p className="font-mono text-[10px] uppercase tracking-[0.2em] text-white/50 text-center">
+          {state === 'idle'      && 'Press the button below to speak with Aria'}
+          {state === 'connecting' && 'Connecting to Aria...'}
+          {state === 'connected' && (agentSpeaking ? 'Aria is speaking...' : 'Listening...')}
+          {state === 'error'     && 'Connection failed — please try again'}
         </p>
       </div>
 
       {/* Controls */}
-      <div className="p-4 bg-white flex items-center justify-center gap-3">
+      <div className="p-4 bg-white border-t-4 border-brutal-black flex items-center justify-center gap-3">
         {state === 'idle' || state === 'error' ? (
           <button onClick={connect}
             className="w-full bg-brutal-black text-white py-3 font-display uppercase tracking-wider text-sm border-2 border-brutal-black hover:bg-accent-gold hover:text-brutal-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:shadow-none hover:translate-x-0.5 hover:translate-y-0.5 flex items-center justify-center gap-2"
           >
-            <Mic className="w-4 h-4" /> Try Demo
+            <Mic className="w-4 h-4" /> Start Voice Chat
           </button>
         ) : (
           <>
